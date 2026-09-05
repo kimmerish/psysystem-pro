@@ -253,6 +253,63 @@ function AdminPage() {
               <Button className="w-full" onClick={addUser}>Створити користувача</Button>
             </CardContent>
           </Card>
+
+          <Dialog open={userOpen} onOpenChange={setUserOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Редагування користувача</DialogTitle>
+                <DialogDescription>ПІБ, пошта, роль та підрозділ.</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">ПІБ</Label>
+                  <Input
+                    value={userDraft.full_name}
+                    onChange={(e) => setUserDraft({ ...userDraft, full_name: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Електронна пошта</Label>
+                  <Input
+                    value={userDraft.email}
+                    onChange={(e) => setUserDraft({ ...userDraft, email: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Роль</Label>
+                  <Select
+                    value={userDraft.role}
+                    onValueChange={(v) => setUserDraft({ ...userDraft, role: v as Role })}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(roleLabels) as Role[]).map((r) => (
+                        <SelectItem key={r} value={r}>{roleLabels[r]}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Підрозділ</Label>
+                  <Select
+                    value={userDraft.unit}
+                    onValueChange={(v) => setUserDraft({ ...userDraft, unit: v })}
+                  >
+                    <SelectTrigger><SelectValue placeholder="Оберіть підрозділ" /></SelectTrigger>
+                    <SelectContent>
+                      {unitList.map((u) => (
+                        <SelectItem key={u.id} value={u.name}>{u.name}</SelectItem>
+                      ))}
+                      <SelectItem value="Служба">Служба</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={saveUser}>Зберегти</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </TabsContent>
 
         <TabsContent value="units" className="mt-4 grid gap-4 lg:grid-cols-2">
