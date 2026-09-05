@@ -62,12 +62,54 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
+type UnitRow = (typeof units)[number];
+type LocationRow = (typeof locations)[number];
+
+const emptyUnit: UnitRow = { id: "", name: "", code: "", parent: "", location: "" };
+const emptyLocation: LocationRow = { id: "", name: "", coordinates: "", address: "" };
+
 function AdminPage() {
   const [list, setList] = useState(profiles);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<Role>("Psychologist");
   const [unit, setUnit] = useState(units[0]!.name);
+  const [unitList, setUnitList] = useState<UnitRow[]>(units);
+  const [locList, setLocList] = useState<LocationRow[]>(locations);
+  const [unitDraft, setUnitDraft] = useState<UnitRow>(emptyUnit);
+  const [locDraft, setLocDraft] = useState<LocationRow>(emptyLocation);
+  const [unitOpen, setUnitOpen] = useState(false);
+  const [locOpen, setLocOpen] = useState(false);
+
+  const saveUnit = () => {
+    if (!unitDraft.name.trim() || !unitDraft.code.trim()) {
+      toast.error("Вкажіть назву та код підрозділу");
+      return;
+    }
+    if (unitDraft.id) {
+      setUnitList(unitList.map((u) => (u.id === unitDraft.id ? unitDraft : u)));
+      toast.success("Підрозділ оновлено");
+    } else {
+      setUnitList([...unitList, { ...unitDraft, id: `u${Date.now()}` }]);
+      toast.success("Підрозділ додано");
+    }
+    setUnitOpen(false);
+  };
+
+  const saveLocation = () => {
+    if (!locDraft.name.trim()) {
+      toast.error("Вкажіть назву локації");
+      return;
+    }
+    if (locDraft.id) {
+      setLocList(locList.map((l) => (l.id === locDraft.id ? locDraft : l)));
+      toast.success("Локацію оновлено");
+    } else {
+      setLocList([...locList, { ...locDraft, id: `l${Date.now()}` }]);
+      toast.success("Локацію додано");
+    }
+    setLocOpen(false);
+  };
 
   const addUser = () => {
     if (!name.trim() || !email.trim()) {
