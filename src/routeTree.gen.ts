@@ -11,9 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as RequestsRouteImport } from './routes/requests'
 import { Route as ScheduleRouteImport } from './routes/schedule'
+import { Route as SyncRouteImport } from './routes/sync'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
 const AnalyticsRoute = AnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KnowledgeRoute = KnowledgeRouteImport.update({
+  id: '/knowledge',
+  path: '/knowledge',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReportsRoute = ReportsRouteImport.update({
@@ -40,43 +47,78 @@ const ScheduleRoute = ScheduleRouteImport.update({
   path: '/schedule',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SyncRoute = SyncRouteImport.update({
+  id: '/sync',
+  path: '/sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/knowledge': typeof KnowledgeRoute
   '/reports': typeof ReportsRoute
   '/requests': typeof RequestsRoute
   '/schedule': typeof ScheduleRoute
+  '/sync': typeof SyncRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/knowledge': typeof KnowledgeRoute
   '/reports': typeof ReportsRoute
   '/requests': typeof RequestsRoute
   '/schedule': typeof ScheduleRoute
+  '/sync': typeof SyncRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/knowledge': typeof KnowledgeRoute
   '/reports': typeof ReportsRoute
   '/requests': typeof RequestsRoute
   '/schedule': typeof ScheduleRoute
+  '/sync': typeof SyncRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/analytics' | '/reports' | '/requests' | '/schedule'
+  fullPaths:
+    | '/'
+    | '/analytics'
+    | '/knowledge'
+    | '/reports'
+    | '/requests'
+    | '/schedule'
+    | '/sync'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analytics' | '/reports' | '/requests' | '/schedule'
-  id: '__root__' | '/' | '/analytics' | '/reports' | '/requests' | '/schedule'
+  to:
+    | '/'
+    | '/analytics'
+    | '/knowledge'
+    | '/reports'
+    | '/requests'
+    | '/schedule'
+    | '/sync'
+  id:
+    | '__root__'
+    | '/'
+    | '/analytics'
+    | '/knowledge'
+    | '/reports'
+    | '/requests'
+    | '/schedule'
+    | '/sync'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  KnowledgeRoute: typeof KnowledgeRoute
   ReportsRoute: typeof ReportsRoute
   RequestsRoute: typeof RequestsRoute
   ScheduleRoute: typeof ScheduleRoute
+  SyncRoute: typeof SyncRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -93,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/analytics'
       fullPath: '/analytics'
       preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/knowledge': {
+      id: '/knowledge'
+      path: '/knowledge'
+      fullPath: '/knowledge'
+      preLoaderRoute: typeof KnowledgeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reports': {
@@ -116,15 +165,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ScheduleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sync': {
+      id: '/sync'
+      path: '/sync'
+      fullPath: '/sync'
+      preLoaderRoute: typeof SyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
+  KnowledgeRoute: KnowledgeRoute,
   ReportsRoute: ReportsRoute,
   RequestsRoute: RequestsRoute,
   ScheduleRoute: ScheduleRoute,
+  SyncRoute: SyncRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
