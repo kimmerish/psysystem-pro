@@ -35,6 +35,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AiModelsSettings } from "@/components/admin/AiModelsSettings";
+import { usePersistentState } from "@/hooks/use-persistent-state";
 import {
   auditLogs,
   locations,
@@ -70,14 +71,19 @@ type LocationRow = (typeof locations)[number];
 const emptyUnit: UnitRow = { id: "", name: "", code: "", parent: "", location: "" };
 const emptyLocation: LocationRow = { id: "", name: "", coordinates: "", address: "" };
 
+type UserRow = (typeof profiles)[number];
+const emptyUser: UserRow = { id: "", full_name: "", email: "", role: "Psychologist" as Role, unit: "" };
+
 function AdminPage() {
-  const [list, setList] = useState(profiles);
+  const [list, setList] = usePersistentState<UserRow[]>("psy.profiles", profiles);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<Role>("Psychologist");
   const [unit, setUnit] = useState(units[0]!.name);
-  const [unitList, setUnitList] = useState<UnitRow[]>(units);
-  const [locList, setLocList] = useState<LocationRow[]>(locations);
+  const [userDraft, setUserDraft] = useState<UserRow>(emptyUser);
+  const [userOpen, setUserOpen] = useState(false);
+  const [unitList, setUnitList] = usePersistentState<UnitRow[]>("psy.units", units);
+  const [locList, setLocList] = usePersistentState<LocationRow[]>("psy.locations", locations);
   const [unitDraft, setUnitDraft] = useState<UnitRow>(emptyUnit);
   const [locDraft, setLocDraft] = useState<LocationRow>(emptyLocation);
   const [unitOpen, setUnitOpen] = useState(false);
@@ -118,10 +124,20 @@ function AdminPage() {
       toast.error("Заповніть ПІБ та електронну пошту");
       return;
     }
-    setList([...list, { id: `pr${list.length + 1}`, full_name: name, email, role, unit }]);
+    setList([...list, { id: `pr${Date.now()}`, full_name: name, email, role, unit }]);
     setName("");
     setEmail("");
     toast.success("Користувача створено");
+  };
+
+  const saveUser = () => {
+    if (!userDraft.full_name.trim() || !userDraft.email.trim()) {
+      toast.error("Заповніть ПІБ та електронну пошту");
+      return;
+    }
+    setList(list.map((p) => (p.id === userDraft.id ? userDraft : p)));
+    setUserOpen(false);
+    toast.success("Дані користувача оновлено");
   };
 
   return (
@@ -168,16 +184,28 @@ function AdminPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm">{p.unit}</TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <Button
                           variant="ghost"
                           size="sm"
+                          aria-label="Редагувати користувача"
+                          onClick={() => {
+                            setUserDraft(p);
+                            setUserOpen(true);
+                          }}
+                        >
+                          <Pencil className="size-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-label="Видалити користувача"
                           onClick={() => {
                             setList(list.filter((x) => x.id !== p.id));
                             toast.success("Користувача видалено");
                           }}
                         >
-                          Видалити
+                          <Trash2 className="size-4" />
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -225,6 +253,63 @@ function AdminPage() {
               <Button className="w-full" onClick={addUser}>Створити користувача</Button>
             </CardContent>
           </Card>
+
+          <Dialog open={userOpen} onOpenChange={setUserOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Редагування користувача</DialogTitle>
+                <DialogDescription>ПІБ, пошта, роль та підрозділ.</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">ПІБ</Label>
+                  <Input
+                    value={userDraft.full_name}
+                    onChange={(e) => setUserDraft({ ...userDraft, full_name: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Електронна пошта</Label>
+                  <Input
+                    value={userDraft.email}
+                    onChange={(e) => setUserDraft({ ...userDraft, email: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Роль</Label>
+                  <Select
+                    value={userDraft.role}
+                    onValueChange={(v) => setUserDraft({ ...userDraft, role: v as Role })}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(roleLabels) as Role[]).map((r) => (
+                        <SelectItem key={r} value={r}>{roleLabels[r]}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Підрозділ</Label>
+                  <Select
+                    value={userDraft.unit}
+                    onValueChange={(v) => setUserDraft({ ...userDraft, unit: v })}
+                  >
+                    <SelectTrigger><SelectValue placeholder="Оберіть підрозділ" /></SelectTrigger>
+                    <SelectContent>
+                      {unitList.map((u) => (
+                        <SelectItem key={u.id} value={u.name}>{u.name}</SelectItem>
+                      ))}
+                      <SelectItem value="Служба">Служба</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={saveUser}>Зберегти</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </TabsContent>
 
         <TabsContent value="units" className="mt-4 grid gap-4 lg:grid-cols-2">
