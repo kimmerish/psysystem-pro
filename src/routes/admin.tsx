@@ -35,6 +35,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AiModelsSettings } from "@/components/admin/AiModelsSettings";
+import { usePersistentState } from "@/hooks/use-persistent-state";
 import {
   auditLogs,
   locations,
