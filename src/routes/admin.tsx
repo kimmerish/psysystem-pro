@@ -38,13 +38,12 @@ import { AiModelsSettings } from "@/components/admin/AiModelsSettings";
 import { usePersistentState } from "@/hooks/use-persistent-state";
 import {
   auditLogs,
-  locations,
   profiles,
   qrCodes,
   roleLabels,
-  units,
   type Role,
 } from "@/data/mock";
+import { useLocations, useUnits, type LocationRow, type UnitRow } from "@/hooks/use-directory";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -123,7 +122,7 @@ function AdminPage() {
       toast.error("Заповніть ПІБ та електронну пошту");
       return;
     }
-    setList([...list, { id: `pr${Date.now()}`, full_name: name, email, role, unit }]);
+    setList([...list, { id: `pr${Date.now()}`, full_name: name, email, role, unit: activeUnit }]);
     setName("");
     setEmail("");
     toast.success("Користувача створено");
@@ -240,7 +239,7 @@ function AdminPage() {
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Підрозділ</Label>
-                <Select value={unit} onValueChange={setUnit}>
+                <Select value={activeUnit} onValueChange={setUnit}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {unitList.map((u) => (
@@ -538,7 +537,7 @@ function AdminPage() {
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-3">
-                    <Select defaultValue={units[0]!.name}>
+                    <Select value={activeUnit} onValueChange={setUnit}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {unitList.map((u) => (
@@ -546,7 +545,7 @@ function AdminPage() {
                         ))}
                       </SelectContent>
                     </Select>
-                    <Select defaultValue={locations[0]!.name}>
+                    <Select value={locList[0]?.name ?? ""}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {locList.map((l) => (
