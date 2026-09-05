@@ -184,16 +184,28 @@ function AdminPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm">{p.unit}</TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <Button
                           variant="ghost"
                           size="sm"
+                          aria-label="Редагувати користувача"
+                          onClick={() => {
+                            setUserDraft(p);
+                            setUserOpen(true);
+                          }}
+                        >
+                          <Pencil className="size-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-label="Видалити користувача"
                           onClick={() => {
                             setList(list.filter((x) => x.id !== p.id));
                             toast.success("Користувача видалено");
                           }}
                         >
-                          Видалити
+                          <Trash2 className="size-4" />
                         </Button>
                       </TableCell>
                     </TableRow>
