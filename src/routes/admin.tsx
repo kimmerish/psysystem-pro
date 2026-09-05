@@ -65,9 +65,6 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type UnitRow = (typeof units)[number];
-type LocationRow = (typeof locations)[number];
-
 const emptyUnit: UnitRow = { id: "", name: "", code: "", parent: "", location: "" };
 const emptyLocation: LocationRow = { id: "", name: "", coordinates: "", address: "" };
 
@@ -79,15 +76,17 @@ function AdminPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<Role>("Psychologist");
-  const [unit, setUnit] = useState(units[0]!.name);
+  const [unit, setUnit] = useState("");
   const [userDraft, setUserDraft] = useState<UserRow>(emptyUser);
   const [userOpen, setUserOpen] = useState(false);
-  const [unitList, setUnitList] = usePersistentState<UnitRow[]>("psy.units", units);
-  const [locList, setLocList] = usePersistentState<LocationRow[]>("psy.locations", locations);
+  const [unitList, setUnitList] = useUnits();
+  const [locList, setLocList] = useLocations();
   const [unitDraft, setUnitDraft] = useState<UnitRow>(emptyUnit);
   const [locDraft, setLocDraft] = useState<LocationRow>(emptyLocation);
   const [unitOpen, setUnitOpen] = useState(false);
   const [locOpen, setLocOpen] = useState(false);
+  const activeUnit = unit || unitList[0]?.name || "";
+
 
   const saveUnit = () => {
     if (!unitDraft.name.trim() || !unitDraft.code.trim()) {
