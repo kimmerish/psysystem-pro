@@ -14,16 +14,430 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_logs: {
+        Row: {
+          action: string
+          details: Json
+          entity_id: string | null
+          entity_type: string
+          id: string
+          timestamp: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          details?: Json
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          timestamp?: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          details?: Json
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          timestamp?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      case_bank: {
+        Row: {
+          created_at: string
+          id: string
+          interventions: string | null
+          outcomes: string | null
+          primary_category: string
+          recommendations: string | null
+          report_id: string | null
+          similar_case_count: number
+          subcategories: string[]
+          symptoms: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          interventions?: string | null
+          outcomes?: string | null
+          primary_category: string
+          recommendations?: string | null
+          report_id?: string | null
+          similar_case_count?: number
+          subcategories?: string[]
+          symptoms?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          interventions?: string | null
+          outcomes?: string | null
+          primary_category?: string
+          recommendations?: string | null
+          report_id?: string | null
+          similar_case_count?: number
+          subcategories?: string[]
+          symptoms?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_bank_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locations: {
+        Row: {
+          address: string | null
+          coordinates: string | null
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          address?: string | null
+          coordinates?: string | null
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          address?: string | null
+          coordinates?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          unit_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id: string
+          unit_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          unit_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qr_codes: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          location_id: string | null
+          token: string
+          unit_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          location_id?: string | null
+          token: string
+          unit_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          location_id?: string | null
+          token?: string
+          unit_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qr_codes_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qr_codes_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reports: {
+        Row: {
+          attachments: Json
+          created_at: string
+          draft_content: string | null
+          final_content: string | null
+          goal: string | null
+          id: string
+          psychologist_id: string | null
+          recommendations: string | null
+          request_id: string | null
+          results: string | null
+          status: Database["public"]["Enums"]["report_status"]
+          tags: string[]
+          work_description: string | null
+        }
+        Insert: {
+          attachments?: Json
+          created_at?: string
+          draft_content?: string | null
+          final_content?: string | null
+          goal?: string | null
+          id?: string
+          psychologist_id?: string | null
+          recommendations?: string | null
+          request_id?: string | null
+          results?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          tags?: string[]
+          work_description?: string | null
+        }
+        Update: {
+          attachments?: Json
+          created_at?: string
+          draft_content?: string | null
+          final_content?: string | null
+          goal?: string | null
+          id?: string
+          psychologist_id?: string | null
+          recommendations?: string | null
+          request_id?: string | null
+          results?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          tags?: string[]
+          work_description?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      requests: {
+        Row: {
+          applicant_id: string | null
+          category: string | null
+          created_at: string
+          id: string
+          location_id: string | null
+          raw_text: string
+          request_type: string
+          status: Database["public"]["Enums"]["request_status"]
+          structured_text: string | null
+          unit_id: string | null
+          urgency: Database["public"]["Enums"]["urgency_level"]
+        }
+        Insert: {
+          applicant_id?: string | null
+          category?: string | null
+          created_at?: string
+          id?: string
+          location_id?: string | null
+          raw_text?: string
+          request_type?: string
+          status?: Database["public"]["Enums"]["request_status"]
+          structured_text?: string | null
+          unit_id?: string | null
+          urgency?: Database["public"]["Enums"]["urgency_level"]
+        }
+        Update: {
+          applicant_id?: string | null
+          category?: string | null
+          created_at?: string
+          id?: string
+          location_id?: string | null
+          raw_text?: string
+          request_type?: string
+          status?: Database["public"]["Enums"]["request_status"]
+          structured_text?: string | null
+          unit_id?: string | null
+          urgency?: Database["public"]["Enums"]["urgency_level"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "requests_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requests_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      schedules: {
+        Row: {
+          created_at: string
+          end_time: string
+          event_title: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          id: string
+          location_id: string | null
+          psychologist_id: string | null
+          route_details: string | null
+          start_time: string
+          travel_time_hours: number
+        }
+        Insert: {
+          created_at?: string
+          end_time: string
+          event_title: string
+          event_type?: Database["public"]["Enums"]["event_type"]
+          id?: string
+          location_id?: string | null
+          psychologist_id?: string | null
+          route_details?: string | null
+          start_time: string
+          travel_time_hours?: number
+        }
+        Update: {
+          created_at?: string
+          end_time?: string
+          event_title?: string
+          event_type?: Database["public"]["Enums"]["event_type"]
+          id?: string
+          location_id?: string | null
+          psychologist_id?: string | null
+          route_details?: string | null
+          start_time?: string
+          travel_time_hours?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "schedules_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      units: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          location_id: string | null
+          name: string
+          parent_id: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          location_id?: string | null
+          name: string
+          parent_id?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          location_id?: string | null
+          name?: string
+          parent_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "units_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "units_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "SuperAdmin" | "ServiceChief" | "Psychologist" | "Applicant"
+      event_type:
+        | "consultation"
+        | "group_work"
+        | "travel"
+        | "documentation"
+        | "other"
+      report_status: "draft" | "submitted" | "approved" | "rejected"
+      request_status:
+        | "new"
+        | "in_processing"
+        | "scheduled"
+        | "completed"
+        | "cancelled"
+      urgency_level: "low" | "medium" | "high" | "critical"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +564,24 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["SuperAdmin", "ServiceChief", "Psychologist", "Applicant"],
+      event_type: [
+        "consultation",
+        "group_work",
+        "travel",
+        "documentation",
+        "other",
+      ],
+      report_status: ["draft", "submitted", "approved", "rejected"],
+      request_status: [
+        "new",
+        "in_processing",
+        "scheduled",
+        "completed",
+        "cancelled",
+      ],
+      urgency_level: ["low", "medium", "high", "critical"],
+    },
   },
 } as const
