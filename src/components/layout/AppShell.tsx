@@ -243,9 +243,9 @@ export function AppShell({
           </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-6">
+        <main className="min-w-0 flex-1 p-3 sm:p-4 md:p-6">
           <div className="mb-5">
-            <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
+            <h1 className="text-lg font-semibold tracking-tight sm:text-xl">{title}</h1>
             <p className="mt-1 text-sm text-muted-foreground">{description}</p>
           </div>
           {children}

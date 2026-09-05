@@ -101,7 +101,7 @@ function SchedulePage() {
       </div>
 
       <Tabs defaultValue="week">
-        <TabsList>
+        <TabsList className="flex w-full justify-start overflow-x-auto">
           <TabsTrigger value="day">День</TabsTrigger>
           <TabsTrigger value="week">Тиждень</TabsTrigger>
           <TabsTrigger value="month">Місяць</TabsTrigger>
@@ -132,7 +132,7 @@ function SchedulePage() {
         </TabsContent>
 
         <TabsContent value="week" className="mt-4">
-          <div className="grid gap-3 md:grid-cols-5">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {days.map((d) => (
               <Card key={d}>
                 <CardHeader className="pb-2">

@@ -144,7 +144,7 @@ function AdminPage() {
       description="Користувачі й ролі, підрозділи, локації, генератор QR-кодів, журнал аудиту та налаштування сповіщень."
     >
       <Tabs defaultValue="users">
-        <TabsList>
+        <TabsList className="flex w-full justify-start overflow-x-auto">
           <TabsTrigger value="users">Користувачі</TabsTrigger>
           <TabsTrigger value="units">Підрозділи та локації</TabsTrigger>
           <TabsTrigger value="qr">QR-коди</TabsTrigger>
