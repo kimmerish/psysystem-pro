@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Mail, MapPin, QrCode, Shield, Users } from "lucide-react";
+import { Bot, Mail, MapPin, Pencil, Plus, QrCode, Shield, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -33,6 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AiModelsSettings } from "@/components/admin/AiModelsSettings";
 import {
   auditLogs,
   locations,
@@ -133,6 +135,7 @@ function AdminPage() {
           <TabsTrigger value="units">Підрозділи та локації</TabsTrigger>
           <TabsTrigger value="qr">QR-коди</TabsTrigger>
           <TabsTrigger value="audit">Журнал аудиту</TabsTrigger>
+          <TabsTrigger value="ai">ШІ-моделі</TabsTrigger>
           <TabsTrigger value="notify">Сповіщення</TabsTrigger>
         </TabsList>
 
@@ -213,7 +216,7 @@ function AdminPage() {
                 <Select value={unit} onValueChange={setUnit}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {units.map((u) => (
+                    {unitList.map((u) => (
                       <SelectItem key={u.id} value={u.name}>{u.name}</SelectItem>
                     ))}
                   </SelectContent>
@@ -429,6 +432,10 @@ function AdminPage() {
         </TabsContent>
 
 
+        <TabsContent value="ai" className="mt-4">
+          <AiModelsSettings />
+        </TabsContent>
+
         <TabsContent value="qr" className="mt-4">
           <Card>
             <CardHeader className="flex-row items-center justify-between pb-3">
@@ -450,7 +457,7 @@ function AdminPage() {
                     <Select defaultValue={units[0]!.name}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        {units.map((u) => (
+                        {unitList.map((u) => (
                           <SelectItem key={u.id} value={u.name}>{u.name}</SelectItem>
                         ))}
                       </SelectContent>
@@ -458,7 +465,7 @@ function AdminPage() {
                     <Select defaultValue={locations[0]!.name}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        {locations.map((l) => (
+                        {locList.map((l) => (
                           <SelectItem key={l.id} value={l.name}>{l.name}</SelectItem>
                         ))}
                       </SelectContent>
