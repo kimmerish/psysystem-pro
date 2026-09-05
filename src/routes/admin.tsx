@@ -70,14 +70,19 @@ type LocationRow = (typeof locations)[number];
 const emptyUnit: UnitRow = { id: "", name: "", code: "", parent: "", location: "" };
 const emptyLocation: LocationRow = { id: "", name: "", coordinates: "", address: "" };
 
+type UserRow = (typeof profiles)[number];
+const emptyUser: UserRow = { id: "", full_name: "", email: "", role: "Psychologist" as Role, unit: "" };
+
 function AdminPage() {
-  const [list, setList] = useState(profiles);
+  const [list, setList] = usePersistentState<UserRow[]>("psy.profiles", profiles);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<Role>("Psychologist");
   const [unit, setUnit] = useState(units[0]!.name);
-  const [unitList, setUnitList] = useState<UnitRow[]>(units);
-  const [locList, setLocList] = useState<LocationRow[]>(locations);
+  const [userDraft, setUserDraft] = useState<UserRow>(emptyUser);
+  const [userOpen, setUserOpen] = useState(false);
+  const [unitList, setUnitList] = usePersistentState<UnitRow[]>("psy.units", units);
+  const [locList, setLocList] = usePersistentState<LocationRow[]>("psy.locations", locations);
   const [unitDraft, setUnitDraft] = useState<UnitRow>(emptyUnit);
   const [locDraft, setLocDraft] = useState<LocationRow>(emptyLocation);
   const [unitOpen, setUnitOpen] = useState(false);
