@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Bot, Mail, MapPin, Pencil, Plus, QrCode, Shield, Trash2, Users } from "lucide-react";
+import { Mail, MapPin, Pencil, Plus, QrCode, Shield, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
