@@ -124,10 +124,20 @@ function AdminPage() {
       toast.error("Заповніть ПІБ та електронну пошту");
       return;
     }
-    setList([...list, { id: `pr${list.length + 1}`, full_name: name, email, role, unit }]);
+    setList([...list, { id: `pr${Date.now()}`, full_name: name, email, role, unit }]);
     setName("");
     setEmail("");
     toast.success("Користувача створено");
+  };
+
+  const saveUser = () => {
+    if (!userDraft.full_name.trim() || !userDraft.email.trim()) {
+      toast.error("Заповніть ПІБ та електронну пошту");
+      return;
+    }
+    setList(list.map((p) => (p.id === userDraft.id ? userDraft : p)));
+    setUserOpen(false);
+    toast.success("Дані користувача оновлено");
   };
 
   return (
