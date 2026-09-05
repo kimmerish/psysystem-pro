@@ -157,7 +157,7 @@ function RequestsPage() {
       description="Агент №1 «Агент Заявок»: структурування тексту, перевірка повноти, уточнювальні питання, категоризація та оцінка терміновості."
     >
       <Tabs defaultValue="form">
-        <TabsList>
+        <TabsList className="flex w-full justify-start overflow-x-auto">
           <TabsTrigger value="form">Форма звернення</TabsTrigger>
           <TabsTrigger value="registry">Реєстр звернень</TabsTrigger>
         </TabsList>

@@ -112,7 +112,7 @@ function ReportsPage() {
       description="Агент №2 «Агент Звітів»: перевірка граматики й стилю, валідація структури, фільтр непсихологічних даних, аналіз слабких місць, експорт та авто-теги."
     >
       <Tabs defaultValue="workspace">
-        <TabsList>
+        <TabsList className="flex w-full justify-start overflow-x-auto">
           <TabsTrigger value="workspace">Робоче середовище</TabsTrigger>
           <TabsTrigger value="registry">Реєстр звітів</TabsTrigger>
         </TabsList>

@@ -77,13 +77,17 @@ function Index() {
             {requests.slice(0, 5).map((r) => (
               <div
                 key={r.id}
-                className="flex flex-wrap items-center gap-3 rounded-md border bg-muted/40 px-3 py-2"
+                className="rounded-md border bg-muted/40 px-3 py-2 sm:flex sm:items-center sm:gap-3"
               >
                 <span className="font-mono text-xs text-muted-foreground">{r.code}</span>
-                <span className="min-w-0 flex-1 truncate text-sm">{r.structured_text}</span>
-                <span className="text-xs text-muted-foreground">{r.unit}</span>
-                <UrgencyBadge urgency={r.urgency} />
-                <StatusBadge status={r.status} />
+                <span className="mt-0.5 block text-sm sm:mt-0 sm:min-w-0 sm:flex-1 sm:truncate">
+                  {r.structured_text}
+                </span>
+                <div className="mt-1.5 flex flex-wrap items-center gap-2 sm:mt-0 sm:shrink-0">
+                  <span className="text-xs text-muted-foreground">{r.unit}</span>
+                  <UrgencyBadge urgency={r.urgency} />
+                  <StatusBadge status={r.status} />
+                </div>
               </div>
             ))}
             <Link to="/requests" className="inline-flex items-center gap-1 pt-1 text-xs font-medium text-accent">
