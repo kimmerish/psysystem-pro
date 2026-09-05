@@ -226,10 +226,19 @@ function AdminPage() {
 
         <TabsContent value="units" className="mt-4 grid gap-4 lg:grid-cols-2">
           <Card>
-            <CardHeader className="pb-3">
+            <CardHeader className="flex-row items-center justify-between pb-3">
               <CardTitle className="flex items-center gap-2 text-sm font-semibold">
                 <Shield className="size-4 text-accent" /> Підрозділи
               </CardTitle>
+              <Button
+                size="sm"
+                onClick={() => {
+                  setUnitDraft(emptyUnit);
+                  setUnitOpen(true);
+                }}
+              >
+                <Plus className="mr-1 size-4" /> Додати
+              </Button>
             </CardHeader>
             <CardContent>
               <Table>
@@ -239,15 +248,38 @@ function AdminPage() {
                     <TableHead>Код</TableHead>
                     <TableHead>Підпорядкування</TableHead>
                     <TableHead>Локація</TableHead>
+                    <TableHead />
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {units.map((u) => (
+                  {unitList.map((u) => (
                     <TableRow key={u.id}>
                       <TableCell className="text-sm">{u.name}</TableCell>
                       <TableCell className="font-mono text-xs">{u.code}</TableCell>
                       <TableCell className="text-xs text-muted-foreground">{u.parent}</TableCell>
                       <TableCell className="text-sm">{u.location}</TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setUnitDraft(u);
+                            setUnitOpen(true);
+                          }}
+                        >
+                          <Pencil className="size-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setUnitList(unitList.filter((x) => x.id !== u.id));
+                            toast.success("Підрозділ видалено");
+                          }}
+                        >
+                          <Trash2 className="size-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -256,22 +288,146 @@ function AdminPage() {
           </Card>
 
           <Card>
-            <CardHeader className="pb-3">
+            <CardHeader className="flex-row items-center justify-between pb-3">
               <CardTitle className="flex items-center gap-2 text-sm font-semibold">
                 <MapPin className="size-4 text-accent" /> Локації
               </CardTitle>
+              <Button
+                size="sm"
+                onClick={() => {
+                  setLocDraft(emptyLocation);
+                  setLocOpen(true);
+                }}
+              >
+                <Plus className="mr-1 size-4" /> Додати
+              </Button>
             </CardHeader>
             <CardContent className="space-y-2">
-              {locations.map((l) => (
-                <div key={l.id} className="rounded-md border p-3">
-                  <p className="text-sm font-medium">{l.name}</p>
-                  <p className="text-xs text-muted-foreground">{l.address}</p>
-                  <p className="font-mono text-[11px] text-muted-foreground">{l.coordinates}</p>
+              {locList.map((l) => (
+                <div key={l.id} className="flex items-start justify-between gap-2 rounded-md border p-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium">{l.name}</p>
+                    <p className="text-xs text-muted-foreground">{l.address}</p>
+                    <p className="font-mono text-[11px] text-muted-foreground">{l.coordinates}</p>
+                  </div>
+                  <div className="flex shrink-0">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setLocDraft(l);
+                        setLocOpen(true);
+                      }}
+                    >
+                      <Pencil className="size-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setLocList(locList.filter((x) => x.id !== l.id));
+                        toast.success("Локацію видалено");
+                      }}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </CardContent>
           </Card>
+
+          <Dialog open={unitOpen} onOpenChange={setUnitOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{unitDraft.id ? "Редагування підрозділу" : "Новий підрозділ"}</DialogTitle>
+                <DialogDescription>Назва, код, підпорядкування та основна локація.</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Назва</Label>
+                  <Input
+                    value={unitDraft.name}
+                    onChange={(e) => setUnitDraft({ ...unitDraft, name: e.target.value })}
+                    placeholder="115 ОМБр"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Код</Label>
+                  <Input
+                    value={unitDraft.code}
+                    onChange={(e) => setUnitDraft({ ...unitDraft, code: e.target.value })}
+                    placeholder="115-OMBR"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Підпорядкування</Label>
+                  <Input
+                    value={unitDraft.parent}
+                    onChange={(e) => setUnitDraft({ ...unitDraft, parent: e.target.value })}
+                    placeholder="Оперативне командування «Північ»"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Локація</Label>
+                  <Select
+                    value={unitDraft.location || locList[0]?.name || ""}
+                    onValueChange={(v) => setUnitDraft({ ...unitDraft, location: v })}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {locList.map((l) => (
+                        <SelectItem key={l.id} value={l.name}>{l.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={saveUnit}>Зберегти</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={locOpen} onOpenChange={setLocOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{locDraft.id ? "Редагування локації" : "Нова локація"}</DialogTitle>
+                <DialogDescription>Назва, адреса та координати пункту.</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Назва</Label>
+                  <Input
+                    value={locDraft.name}
+                    onChange={(e) => setLocDraft({ ...locDraft, name: e.target.value })}
+                    placeholder="Пункт Схід"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Адреса</Label>
+                  <Input
+                    value={locDraft.address}
+                    onChange={(e) => setLocDraft({ ...locDraft, address: e.target.value })}
+                    placeholder="Польовий пункт психологічної допомоги"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Координати</Label>
+                  <Input
+                    value={locDraft.coordinates}
+                    onChange={(e) => setLocDraft({ ...locDraft, coordinates: e.target.value })}
+                    placeholder="48.5937, 38.0000"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={saveLocation}>Зберегти</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </TabsContent>
+
 
         <TabsContent value="qr" className="mt-4">
           <Card>
