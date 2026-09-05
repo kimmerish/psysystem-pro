@@ -44,14 +44,13 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   categories,
-  locations,
   requests,
   statusLabels,
-  units,
   urgencyLabels,
   type RequestItem,
   type Urgency,
 } from "@/data/mock";
+import { useLocations, useUnits } from "@/hooks/use-directory";
 
 export const Route = createFileRoute("/requests")({
   head: () => ({
@@ -114,8 +113,12 @@ function detectUrgency(text: string): Urgency {
 
 function RequestsPage() {
   const [raw, setRaw] = useState("");
-  const [unit, setUnit] = useState(units[0]!.name);
-  const [location, setLocation] = useState(locations[0]!.name);
+  const [units] = useUnits();
+  const [locations] = useLocations();
+  const [unitSel, setUnit] = useState("");
+  const [locSel, setLocation] = useState("");
+  const unit = unitSel || units[0]?.name || "";
+  const location = locSel || locations[0]?.name || "";
   const [type, setType] = useState("Самозвернення");
   const [structured, setStructured] = useState("");
   const [category, setCategory] = useState<string>("");

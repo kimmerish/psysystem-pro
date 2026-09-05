@@ -36,7 +36,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { profiles, roleLabels, units } from "@/data/mock";
+import { profiles, roleLabels } from "@/data/mock";
+import { useUnits } from "@/hooks/use-directory";
 
 const nav = [
   { to: "/", label: "Огляд служби", icon: LayoutDashboard },
@@ -60,7 +61,9 @@ export function AppShell({
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [profile, setProfile] = useState(profiles[4]!.id);
-  const [unit, setUnit] = useState(units[0]!.name);
+  const [units] = useUnits();
+  const [unitSel, setUnit] = useState("");
+  const unit = unitSel || units[0]?.name || "";
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const current = profiles.find((p) => p.id === profile)!;
 

@@ -38,13 +38,12 @@ import { AiModelsSettings } from "@/components/admin/AiModelsSettings";
 import { usePersistentState } from "@/hooks/use-persistent-state";
 import {
   auditLogs,
-  locations,
   profiles,
   qrCodes,
   roleLabels,
-  units,
   type Role,
 } from "@/data/mock";
+import { useLocations, useUnits, type LocationRow, type UnitRow } from "@/hooks/use-directory";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -65,9 +64,6 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type UnitRow = (typeof units)[number];
-type LocationRow = (typeof locations)[number];
-
 const emptyUnit: UnitRow = { id: "", name: "", code: "", parent: "", location: "" };
 const emptyLocation: LocationRow = { id: "", name: "", coordinates: "", address: "" };
 
@@ -79,15 +75,17 @@ function AdminPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<Role>("Psychologist");
-  const [unit, setUnit] = useState(units[0]!.name);
+  const [unit, setUnit] = useState("");
   const [userDraft, setUserDraft] = useState<UserRow>(emptyUser);
   const [userOpen, setUserOpen] = useState(false);
-  const [unitList, setUnitList] = usePersistentState<UnitRow[]>("psy.units", units);
-  const [locList, setLocList] = usePersistentState<LocationRow[]>("psy.locations", locations);
+  const [unitList, setUnitList] = useUnits();
+  const [locList, setLocList] = useLocations();
   const [unitDraft, setUnitDraft] = useState<UnitRow>(emptyUnit);
   const [locDraft, setLocDraft] = useState<LocationRow>(emptyLocation);
   const [unitOpen, setUnitOpen] = useState(false);
   const [locOpen, setLocOpen] = useState(false);
+  const activeUnit = unit || unitList[0]?.name || "";
+
 
   const saveUnit = () => {
     if (!unitDraft.name.trim() || !unitDraft.code.trim()) {
@@ -124,7 +122,7 @@ function AdminPage() {
       toast.error("Заповніть ПІБ та електронну пошту");
       return;
     }
-    setList([...list, { id: `pr${Date.now()}`, full_name: name, email, role, unit }]);
+    setList([...list, { id: `pr${Date.now()}`, full_name: name, email, role, unit: activeUnit }]);
     setName("");
     setEmail("");
     toast.success("Користувача створено");
@@ -241,7 +239,7 @@ function AdminPage() {
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Підрозділ</Label>
-                <Select value={unit} onValueChange={setUnit}>
+                <Select value={activeUnit} onValueChange={setUnit}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {unitList.map((u) => (
@@ -539,7 +537,7 @@ function AdminPage() {
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-3">
-                    <Select defaultValue={units[0]!.name}>
+                    <Select value={activeUnit} onValueChange={setUnit}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {unitList.map((u) => (
@@ -547,7 +545,7 @@ function AdminPage() {
                         ))}
                       </SelectContent>
                     </Select>
-                    <Select defaultValue={locations[0]!.name}>
+                    <Select value={locList[0]?.name ?? ""}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {locList.map((l) => (
